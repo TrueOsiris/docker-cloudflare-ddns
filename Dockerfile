@@ -1,8 +1,28 @@
 ARG S6_ARCH
-FROM oznu/s6-alpine:3.12-${S6_ARCH:-amd64}
+FROM alpine:latest
 
-RUN apk add --no-cache jq curl bind-tools
+ARG QEMU_ARCH
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
+
+RUN set -x && apk add --no-cache curl coreutils tzdata shadow bind-tools jq \
+  && case "${QEMU_ARCH}" in \
+    x86_64) S6_ARCH='amd64';; \
+    arm) S6_ARCH='armhf';; \
+    aarch64) S6_ARCH='aarch64';; \
+    *) echo "unsupported architecture"; exit 1 ;; \
+  esac \
+  && curl -L -s https://github.com/multiarch/qemu-user-static/releases/download/v7.2.0-1/qemu-${QEMU_ARCH:-x86_64}-static.tar.gz | tar xvzf - -C /usr/bin \
+  && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v3.2.1.0/s6-overlay-${S6_ARCH}.tar.gz | tar xvzf - -C / \
+  && groupmod -g 911 users && \
+  useradd -u 911 -U -d /config -s /bin/false abc && \
+  usermod -G users abc && \
+  mkdir -p /app /config /defaults && \
+  apk del --no-cache curl \
+  apk del --purge \
+  rm -rf /tmp/*
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 CF_API=https://api.cloudflare.com/client/v4 RRTYPE=A CRON="*/5	*	*	*	*"
 
 COPY root /
+
+ENTRYPOINT [ "/init" ]
