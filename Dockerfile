@@ -19,8 +19,8 @@ RUN set -x && apk add --no-cache curl coreutils tzdata shadow bind-tools jq file
   && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v3.2.1.0/s6-overlay-${S6_ARCH}.tar.xz -o /tmp/s6-overlay.tar.xz \
   && file /tmp/s6-overlay.tar.xz \
   && tar xJf /tmp/s6-overlay.tar.xz -C / \
-  && rm /tmp/s6-overlay.tar.xz 
-RUN groupmod -g 911 users && \
+  && rm /tmp/s6-overlay.tar.xz \
+  && groupmod -g 911 users && \
   useradd -u 911 -U -d /config -s /bin/false abc && \
   usermod -G users abc && \
   mkdir -p /app /config /defaults && \
@@ -32,4 +32,3 @@ ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 CF_API=https://api.cloudflare.com/client/v4 R
 
 COPY root /
 
-ENTRYPOINT [ "/init" ]
