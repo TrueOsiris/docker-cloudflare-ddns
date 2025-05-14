@@ -1,10 +1,13 @@
-[![Travis](https://img.shields.io/travis/oznu/docker-cloudflare-ddns.svg)](https://travis-ci.org/oznu/docker-cloudflare-ddns) [![Docker Pulls](https://img.shields.io/docker/pulls/oznu/cloudflare-ddns.svg)](https://hub.docker.com/r/oznu/cloudflare-ddns/)
+[![Docker Pulls](https://badgen.net/docker/pulls/trueosiris/cloudflare-ddns?icon=docker&label=pulls)](https://hub.docker.com/r/trueosiris/cloudflare-ddns/)
+[![Github last-commit](https://img.shields.io/github/last-commit/TrueOsiris/docker-cloudflare-ddns?icon=github&cache=600)](https://github.com/TrueOsiris/docker-cloudflare-ddns)
+[![Oznus-image docker Pulls](https://img.shields.io/docker/pulls/oznu/cloudflare-ddns.svg)](https://hub.docker.com/r/oznu/cloudflare-ddns/)
 
 # Docker CloudFlare DDNS
 
 This small Alpine Linux based Docker image will allow you to use the free [CloudFlare DNS Service](https://www.cloudflare.com/dns/) as a Dynamic DNS Provider ([DDNS](https://en.wikipedia.org/wiki/Dynamic_DNS)).
 
-This is a multi-arch image and will run on amd64, aarch64, and armhf devices, including the Raspberry Pi.
+This is a multi-arch image and will run on amd64, aarch64, and armhf devices, including the Raspberry Pi.<br>
+Forked from [oznu's archived repo](https://github.com/oznu/docker-cloudflare-ddns) and [Starbuggx's fork](https://github.com/starbuggx/docker-cloudflare-ddns).<br>
 
 ## Image Variants
 
