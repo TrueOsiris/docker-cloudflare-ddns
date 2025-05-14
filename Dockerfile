@@ -1,34 +1,34 @@
-ARG S6_ARCH
 FROM alpine:latest
 
 ARG QEMU_ARCH
-ENV QEMU_ARCH=${QEMU_ARCH:-x86_64} S6_KEEP_ENV=1
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
 
-RUN set -x && apk add --no-cache curl coreutils tzdata shadow bind-tools jq file \
-  && case "${QEMU_ARCH}" in \
-    x86_64) S6_ARCH='x86_64';; \
-    arm) S6_ARCH='armhf';; \
-    aarch64) S6_ARCH='aarch64';; \
-    *) echo "unsupported architecture"; exit 1 ;; \
-  esac \
-  && echo "downloading qemu-${QEMU_ARCH:-x86_64}-static.tar.gz" \
-  && curl -L -s https://github.com/multiarch/qemu-user-static/releases/download/v7.2.0-1/qemu-${QEMU_ARCH:-x86_64}-static.tar.gz -o /tmp/qemu-static.tar.gz \
-  && tar xvzf /tmp/qemu-static.tar.gz -C /usr/bin \
-  && rm /tmp/qemu-static.tar.gz \
-  && echo "downloading s6-overlay-${S6_ARCH}.tar.xz" \
-  && curl -L -s https://github.com/just-containers/s6-overlay/releases/download/v3.2.1.0/s6-overlay-${S6_ARCH}.tar.xz -o /tmp/s6-overlay.tar.xz \
-  && file /tmp/s6-overlay.tar.xz \
-  && tar xJf /tmp/s6-overlay.tar.xz -C / \
-  && rm /tmp/s6-overlay.tar.xz \
-  && groupmod -g 911 users && \
-  useradd -u 911 -U -d /config -s /bin/false abc && \
-  usermod -G users abc && \
-  mkdir -p /app /config /defaults && \
-  apk del --no-cache curl \
-  apk del --purge \
-  rm -rf /tmp/*
+# Install dependencies
+RUN set -x \
+  && apk add --no-cache jq curl bind-tools shadow tzdata coreutils busybox-suid cronie \
+  && groupmod -g 911 users \
+  && useradd -u 911 -U -d /config -s /bin/false abc \
+  && mkdir -p /app /config /defaults
 
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 CF_API=https://api.cloudflare.com/client/v4 RRTYPE=A CRON="*/5	*	*	*	*"
+# Optional: QEMU if cross-compiling
+RUN curl -L -s https://github.com/multiarch/qemu-user-static/releases/download/v7.2.0-1/qemu-${QEMU_ARCH}-static.tar.gz -o /tmp/qemu.tar.gz \
+  && tar -xvzf /tmp/qemu.tar.gz -C /usr/bin \
+  && rm /tmp/qemu.tar.gz
 
-COPY root /
+# Environment
+ENV CF_API=https://api.cloudflare.com/client/v4 \
+    RRTYPE=A \
+    CRON="*/5 * * * *"
+
+# Copy your script/files into the image
+COPY root/ /
+RUN chmod +x /app/* \
+ && ln -s /app/cloudflare.sh /usr/local/bin/cloudflare.sh \
+ && echo "*/5 * * * * abc /usr/local/bin/cloudflare.sh >> /var/log/cron.log 2>&1" > /etc/crontabs/abc \
+ && touch /var/log/cron.log \
+ && chown abc:users /var/log/cron.log \
+ && chown abc:users /etc/crontabs/abc
+CMD ["/bin/sh", "-c", "/usr/sbin/crond -f && tail -F /var/log/cron.log"]
+
+
 
