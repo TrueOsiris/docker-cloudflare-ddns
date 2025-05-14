@@ -1,6 +1,6 @@
-[![Docker Pulls](https://badgen.net/docker/pulls/trueosiris/cloudflare-ddns?icon=docker&label=pulls)](https://hub.docker.com/r/trueosiris/cloudflare-ddns/)
 [![Github last-commit](https://img.shields.io/github/last-commit/TrueOsiris/docker-cloudflare-ddns?icon=github&cache=600)](https://github.com/TrueOsiris/docker-cloudflare-ddns)
-[![Oznus-image docker Pulls](https://img.shields.io/docker/pulls/oznu/cloudflare-ddns.svg)](https://hub.docker.com/r/oznu/cloudflare-ddns/)
+[![Docker Pulls](https://badgen.net/docker/pulls/trueosiris/cloudflare-ddns?icon=docker&label=pulls)](https://hub.docker.com/r/trueosiris/cloudflare-ddns/)
+[![Oznus-image pulls](https://badgen.net/docker/pulls/oznu/cloudflare-ddns?icon=docker&label=pulls)](https://hub.docker.com/r/oznu/cloudflare-ddns/)
 
 # Docker CloudFlare DDNS
 
